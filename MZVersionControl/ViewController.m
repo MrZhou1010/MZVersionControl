@@ -50,8 +50,9 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"有新版本更新" message:versionInfo[@"releaseNotes"] preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *ignoreAction = [UIAlertAction actionWithTitle:@"忽略" style:UIAlertActionStyleDefault handler:nil];
     UIAlertAction *updateAction = [UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        if ([[UIApplication sharedApplication] canOpenURL:versionInfo[@"trackViewUrl"]]) {
-            [[UIApplication sharedApplication] openURL:versionInfo[@"trackViewUrl"] options:@{} completionHandler:nil];
+        NSURL *url = [NSURL URLWithString:versionInfo[@"trackViewUrl"]];
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
         }
     }];
     [alertController addAction:ignoreAction];
