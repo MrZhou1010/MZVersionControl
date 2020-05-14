@@ -25,7 +25,6 @@
     [button1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [button1 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button1];
-    
     UIButton *button2 = [UIButton buttonWithType:UIButtonTypeCustom];
     button2.tag = 102;
     [button2 setFrame:CGRectMake(100, 300, 150, 50)];
@@ -52,7 +51,11 @@
     UIAlertAction *updateAction = [UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSURL *url = [NSURL URLWithString:versionInfo[@"trackViewUrl"]];
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            if (@available(iOS 10.0, *)) {
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            } else {
+                [[UIApplication sharedApplication] openURL:url];
+            }
         }
     }];
     [alertController addAction:ignoreAction];
