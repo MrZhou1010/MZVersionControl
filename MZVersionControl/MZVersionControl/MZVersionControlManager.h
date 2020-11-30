@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MZVersionControlManager : NSObject
 
 /// 单例
-+ (instancetype)shareManager;
++ (instancetype)shareInstance;
 
 /// 检查更新版本
 /// @param appId 应用的id

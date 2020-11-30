@@ -12,7 +12,7 @@
 @implementation MZVersionControlManager
 
 #pragma mark - 单例
-+ (instancetype)shareManager {
++ (instancetype)shareInstance {
     static MZVersionControlManager *_instance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -23,11 +23,11 @@
 
 #pragma mark - API
 + (void)checkNewVersionWithAppId:(NSString *)appId viewController:(UIViewController *)viewController {
-    [[self shareManager] checkNewVersion:appId viewController:viewController];
+    [[self shareInstance] checkNewVersion:appId viewController:viewController];
 }
 
 + (void)checkNewVersionWithAppId:(NSString *)appId showUpdate:(void(^)(NSDictionary *))showUpdate {
-    [[self shareManager] checkNewVersion:appId showUpdate:showUpdate];
+    [[self shareInstance] checkNewVersion:appId showUpdate:showUpdate];
 }
 
 - (void)checkNewVersion:(NSString *)appId viewController:(UIViewController *)viewController {
@@ -84,11 +84,30 @@
     NSString *ignoreVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"ingoreVersion"];
     // 获得当前的版本
     NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    if ([currentVersion compare:newVersion] == NSOrderedDescending || NSOrderedSame || [ignoreVersion isEqualToString:newVersion]) {
+    if ([ignoreVersion isEqualToString:newVersion]) {
         return NO;
-    } else {
-        return YES;
     }
+    NSMutableArray *currentVersionArray = [currentVersion componentsSeparatedByString:@"."].mutableCopy;
+    NSMutableArray *newVersionArray = [newVersion componentsSeparatedByString:@"."].mutableCopy;
+    if (newVersionArray.count > currentVersionArray.count) {
+        // 当线上版本位数大于或等于当前版本的位数,补0成相同长度
+        for (NSInteger index = 0; index < newVersionArray.count - currentVersionArray.count; index++) {
+            [currentVersionArray addObject:@"0"];
+        }
+    } else if (newVersionArray.count < currentVersionArray.count) {
+        // 当线上版本位数大于或等于当前版本的位数,补0成相同长度
+        for (NSInteger index = 0; index < currentVersionArray.count - newVersionArray.count; index++) {
+            [newVersionArray addObject:@"0"];
+        }
+    }
+    for (NSInteger index = 0; index < newVersionArray.count; index++) {
+        if ([newVersionArray[index] intValue] > [currentVersionArray[index] intValue]) {
+            return YES;
+        } else if ([newVersionArray[index] intValue] < [currentVersionArray[index] intValue]) {
+            return NO;
+        }
+    }
+    return NO;
 }
 
 #pragma mark - AlertController
