@@ -17,17 +17,22 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.navigationItem.title = @"版本控制（版本检测、版本更新）";
+    [self setupUI];
+}
+
+- (void)setupUI {
     UIButton *button1 = [UIButton buttonWithType:UIButtonTypeCustom];
     button1.tag = 101;
-    [button1 setFrame:CGRectMake(100, 200, 150, 50)];
+    [button1 setFrame:CGRectMake(100.0, 200.0, 150.0, 50.0)];
     [button1 setTitle:@"版本更新一" forState:UIControlStateNormal];
     [button1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [button1 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button1];
     UIButton *button2 = [UIButton buttonWithType:UIButtonTypeCustom];
     button2.tag = 102;
-    [button2 setFrame:CGRectMake(100, 300, 150, 50)];
+    [button2 setFrame:CGRectMake(100.0, 300.0, 150.0, 50.0)];
     [button2 setTitle:@"版本更新二" forState:UIControlStateNormal];
     [button2 setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [button2 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];

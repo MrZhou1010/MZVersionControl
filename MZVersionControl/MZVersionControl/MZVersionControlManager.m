@@ -110,7 +110,7 @@
     return NO;
 }
 
-#pragma mark - AlertController
+#pragma mark - UIAlertController
 - (void)showAlertWithInfo:(NSDictionary *)versionInfo viewController:(UIViewController *)viewController {
     NSString *title = [NSString stringWithFormat:@"有新的版本(%@)", versionInfo[@"version"]];
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:versionInfo[@"releaseNotes"] preferredStyle:UIAlertControllerStyleAlert];
