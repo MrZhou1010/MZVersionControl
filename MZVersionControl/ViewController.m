@@ -11,41 +11,85 @@
 
 @interface ViewController ()
 
+@property (nonatomic, strong) UILabel *infoLabel;
+
+@property (nonatomic, strong) UIButton *systemAlertBtn;
+
+@property (nonatomic, strong) UIButton *customAlertBtn;
+
 @end
 
 @implementation ViewController
 
+#pragma mark - Lazy
+- (UILabel *)infoLabel {
+    if (!_infoLabel) {
+        _infoLabel = [[UILabel alloc] init];
+        _infoLabel.frame = CGRectMake(100.0, 100.0, 150.0, 50.0);
+        _infoLabel.text = @"版本检测";
+        _infoLabel.textColor = [UIColor redColor];
+        _infoLabel.font = [UIFont systemFontOfSize:15];
+        _infoLabel.textAlignment = NSTextAlignmentCenter;
+        _infoLabel.hidden = YES;
+    }
+    return _infoLabel;
+}
+
+- (UIButton *)systemAlertBtn {
+    if (!_systemAlertBtn) {
+        _systemAlertBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _systemAlertBtn.tag = 101;
+        _systemAlertBtn.frame = CGRectMake(100.0, 200.0, 150.0, 50.0);
+        [_systemAlertBtn setTitle:@"版本更新一" forState:UIControlStateNormal];
+        [_systemAlertBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [_systemAlertBtn addTarget:self action:@selector(btnAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _systemAlertBtn;
+}
+
+- (UIButton *)customAlertBtn {
+    if (!_customAlertBtn) {
+        _customAlertBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _customAlertBtn.tag = 102;
+        _customAlertBtn.frame = CGRectMake(100.0, 300.0, 150.0, 50.0);
+        [_customAlertBtn setTitle:@"版本更新二" forState:UIControlStateNormal];
+        [_customAlertBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [_customAlertBtn addTarget:self action:@selector(btnAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _customAlertBtn;
+}
+
+#pragma mark - UI
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    self.navigationItem.title = @"版本控制（版本检测、版本更新）";
+    self.navigationItem.title = @"版本控制(版本检测、版本更新)";
     [self setupUI];
 }
 
 - (void)setupUI {
-    UIButton *button1 = [UIButton buttonWithType:UIButtonTypeCustom];
-    button1.tag = 101;
-    [button1 setFrame:CGRectMake(100.0, 200.0, 150.0, 50.0)];
-    [button1 setTitle:@"版本更新一" forState:UIControlStateNormal];
-    [button1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [button1 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:button1];
-    UIButton *button2 = [UIButton buttonWithType:UIButtonTypeCustom];
-    button2.tag = 102;
-    [button2 setFrame:CGRectMake(100.0, 300.0, 150.0, 50.0)];
-    [button2 setTitle:@"版本更新二" forState:UIControlStateNormal];
-    [button2 setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-    [button2 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:button2];
+    [self.view addSubview:self.infoLabel];
+    [self.view addSubview:self.systemAlertBtn];
+    [self.view addSubview:self.customAlertBtn];
+    
+    [MZVersionControlManager checkNewVersionWithAppId:@"1472485134" showUpdate:^(BOOL hasNewVersion, NSDictionary * _Nonnull versionInfo) {
+        // 有新版本
+        if (hasNewVersion) {
+            self.infoLabel.hidden = NO;
+            self.infoLabel.text = [NSString stringWithFormat:@"新版本: %@", versionInfo[@"version"]];
+        }
+    }];
 }
 
-- (void)buttonClick:(UIButton *)button {
-    if (button.tag == 101) {
+- (void)btnAction:(UIButton *)btn {
+    if (btn.tag == 101) {
         [MZVersionControlManager checkNewVersionWithAppId:@"1472485134" viewController:self];
     } else {
-        [MZVersionControlManager checkNewVersionWithAppId:@"1472485134" showUpdate:^(NSDictionary * _Nonnull versionInfo) {
-            // 自定义版本跟新的视图
-            [self customAlertView:versionInfo];
+        [MZVersionControlManager checkNewVersionWithAppId:@"1472485134" showUpdate:^(BOOL hasNewVersion, NSDictionary * _Nonnull versionInfo) {
+            // 自定义版本更新的视图
+            if (hasNewVersion) {
+                [self customAlertView:versionInfo];
+            }
         }];
     }
 }

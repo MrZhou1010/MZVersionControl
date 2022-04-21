@@ -24,8 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 检查更新版本
 /// @param appId 应用的id
-/// @param showUpdate 回调version数据
-+ (void)checkNewVersionWithAppId:(NSString *)appId showUpdate:(void(^)(NSDictionary *))showUpdate;
+/// @param showUpdate 回调hasNewVersion及version数据
++ (void)checkNewVersionWithAppId:(NSString *)appId showUpdate:(void(^)(BOOL, NSDictionary *))showUpdate;
 
 /// 检查更新版本
 /// @param appId 应用的id
@@ -34,8 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 检查更新版本
 /// @param appId 应用的id
-/// @param showUpdate 回调version数据
-- (void)checkNewVersion:(NSString *)appId showUpdate:(void(^)(NSDictionary *))showUpdate;
+/// @param showUpdate 回调hasNewVersion及version数据
+- (void)checkNewVersion:(NSString *)appId showUpdate:(void(^)(BOOL, NSDictionary *))showUpdate;
 
 @end
 

@@ -26,38 +26,40 @@
     [[self shareInstance] checkNewVersion:appId viewController:viewController];
 }
 
-+ (void)checkNewVersionWithAppId:(NSString *)appId showUpdate:(void(^)(NSDictionary *))showUpdate {
++ (void)checkNewVersionWithAppId:(NSString *)appId showUpdate:(void(^)(BOOL, NSDictionary *))showUpdate {
     [[self shareInstance] checkNewVersion:appId showUpdate:showUpdate];
 }
 
 - (void)checkNewVersion:(NSString *)appId viewController:(UIViewController *)viewController {
-    [self getAppStoreVersion:appId update:^(NSDictionary *versionInfo) {
+    [self getAppStoreVersion:appId update:^(BOOL hasNewVersion, NSDictionary *versionInfo) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlertWithInfo:versionInfo viewController:viewController];
+            if (hasNewVersion) {
+                [self showAlertWithInfo:versionInfo viewController:viewController];
+            }
         });
     }];
 }
 
-- (void)checkNewVersion:(NSString *)appId showUpdate:(void(^)(NSDictionary *))showUpdate {
-    [self getAppStoreVersion:appId update:^(NSDictionary *versionInfo) {
+- (void)checkNewVersion:(NSString *)appId showUpdate:(void(^)(BOOL, NSDictionary *))showUpdate {
+    [self getAppStoreVersion:appId update:^(BOOL hasNewVersion, NSDictionary *versionInfo) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (showUpdate) {
-                showUpdate(versionInfo);
+                showUpdate(hasNewVersion, versionInfo);
             }
         });
     }];
 }
 
 #pragma mark - 获取AppStore上的版本信息
-- (void)getAppStoreVersion:(NSString *)appId update:(void(^)(NSDictionary *))update {
+- (void)getAppStoreVersion:(NSString *)appId update:(void(^)(BOOL, NSDictionary *))update {
     [self getAppStoreInfo:appId success:^(NSDictionary *resDic) {
         NSInteger resultCount = [resDic[@"resultCount"] integerValue];
         if (resultCount == 1) {
             NSDictionary *versionInfo = [resDic[@"results"] firstObject];
             // 是否提示更新
             BOOL result = [self isEqualNewVersion:versionInfo[@"version"]];
-            if (result && update) {
-                update(versionInfo);
+            if (update) {
+                update(result, versionInfo);
             }
         }
     }];
